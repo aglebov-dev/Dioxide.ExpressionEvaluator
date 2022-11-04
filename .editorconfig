@@ -1,0 +1,30 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+trim_trailing_whitespace = true
+insert_final_newline = true
+indent_style = space
+indent_size = 4
+
+[*.cs]
+dotnet_naming_rule.constants_must_be_all_uppers.symbols = const_members
+dotnet_naming_rule.constants_must_be_all_uppers.severity = warning
+dotnet_naming_rule.constants_must_be_all_uppers.style = all_uppers
+dotnet_naming_symbols.const_members.applicable_kinds = field
+dotnet_naming_symbols.const_members.required_modifiers = const
+dotnet_naming_style.all_uppers.capitalization = all_upper
+max_line_length = 130
+
+[*.config]
+indent_size = 2
+
+[*.csproj]
+indent_size = 2
+
+[*.yml]
+indent_size = 2
+
+[*.yaml]
+indent_size = 2
