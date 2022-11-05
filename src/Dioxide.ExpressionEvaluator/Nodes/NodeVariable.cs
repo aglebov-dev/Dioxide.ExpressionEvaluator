@@ -6,13 +6,6 @@ internal sealed class NodeVariable : INode
 {
     string _variableName;
 
-    public NodeVariable(string variableName)
-    {
-        _variableName = variableName;
-    }
-
-    public decimal Eval(IContext context)
-    {
-        return context.ResolveVariable(_variableName);
-    }
+    public NodeVariable(string variableName) => _variableName = variableName;
+    public double Eval(IContext context) => context.ResolveVariable(_variableName);
 }

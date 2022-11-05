@@ -18,26 +18,26 @@ namespace Dioxide.ExpressionEvaluator.Evaluation
             var tokens = _tokenizer.GetTokens(text).ToArray();
             var context = new ParsingContext(tokens);
 
-            var node = GetExpression(context);
+            var node = AddOrSubtract(context);
             if (context.CurrentToken.Type is TokenType.EOF || context.NextToken.Type is not TokenType.EOF)
             {
-                throw new SyntaxException("Unexpected characters at end of expression");
+                throw new SyntaxException($"Unexpected characters at end of expression '{context.CurrentToken}{context.NextToken}'");
             }
 
             return node;
         }
 
-        private INode GetExpression(ParsingContext context)
+        private INode AddOrSubtract(ParsingContext context)
         {
             var left = MultiplyOrDivide(context);
 
             while (context.NextToken.Type is TokenType.Add or TokenType.Subtract)
             {
                 context.MoveNext();
-                var operation = context.GetOperation(context.CurrentToken.Type);
+                var type = context.CurrentToken.Type;
                 var right = MultiplyOrDivide(context);
 
-                left = new NodeBinary(left, right, operation);
+                left = new NodeBinary(left, right, type);
             }
 
             return left;
@@ -45,15 +45,30 @@ namespace Dioxide.ExpressionEvaluator.Evaluation
 
         private INode MultiplyOrDivide(ParsingContext context)
         {
-            var left = ParseUnary(context);
+            var left = Pow(context);
 
             while (context.NextToken.Type is TokenType.Multiply or TokenType.Divide)
             {
                 context.MoveNext();
-                var operation = context.GetOperation(context.CurrentToken.Type);
+                var type = context.CurrentToken.Type;
+                var right = Pow(context);
+
+                left = new NodeBinary(left, right, type);
+            }
+
+            return left;
+        }
+
+        private INode Pow(ParsingContext context)
+        {
+            var left = ParseUnary(context);
+            while (context.NextToken.Type is TokenType.Pow)
+            {
+                context.MoveNext();
+                var type = context.CurrentToken.Type;
                 var right = ParseUnary(context);
 
-                left = new NodeBinary(left, right, operation);
+                left = new NodeBinary(left, right, type);
             }
 
             return left;
@@ -66,7 +81,7 @@ namespace Dioxide.ExpressionEvaluator.Evaluation
                 context.MoveNext();
 
             return context.CurrentToken.Type is TokenType.Subtract
-                ? new NodeUnary(ParseUnary(context), a => -a)
+                ? new NodeBinary(new NodeNumber(0), ParseUnary(context), TokenType.Subtract)
                 : NumberOrIdentifier(context);
         }
 
@@ -84,7 +99,7 @@ namespace Dioxide.ExpressionEvaluator.Evaluation
 
         private INode GetSubExpression(ParsingContext context)
         {
-            var node = GetExpression(context);
+            var node = AddOrSubtract(context);
 
             if (context.NextToken.Type is not TokenType.CloseParens)
                 throw new SyntaxException("Missing close parenthesis");
@@ -113,7 +128,7 @@ namespace Dioxide.ExpressionEvaluator.Evaluation
             var arguments = new List<INode>();
             while (true)
             {
-                arguments.Add(GetExpression(context));
+                arguments.Add(AddOrSubtract(context));
 
                 context.MoveNext();
                 if (context.CurrentToken.Type is not TokenType.Comma)

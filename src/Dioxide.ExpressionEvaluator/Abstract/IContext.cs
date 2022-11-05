@@ -1,11 +1,11 @@
-using System;
+using Dioxide.ExpressionEvaluator.Evaluation;
 
 namespace Dioxide.ExpressionEvaluator.Abstract;
 
-public interface IContext: IFuncContexKeeper
+public interface IContext : IFuncContexKeeper
 {
-    decimal ResolveVariable(string name);
-    decimal CallFunction(string name, decimal[] arguments);
-    IContext AddFunction(string name, Func<decimal[], decimal> function);
-    IContext AddVariable(string name, decimal value);
+    double ResolveVariable(string name);
+    double CallFunction(string name, double[] arguments);
+    IContext AddFunction(string name, CustomEvalFunction function);
+    IContext AddVariable(string name, double value);
 }

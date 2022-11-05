@@ -4,15 +4,8 @@ namespace Dioxide.ExpressionEvaluator.Nodes;
 
 internal sealed class NodeNumber : INode
 {
-    private readonly decimal _number;
+    private readonly double _number;
 
-    public NodeNumber(decimal number)
-    {
-        _number = number;
-    }
-
-    public decimal Eval(IContext ctx)
-    {
-        return _number;
-    }
+    public NodeNumber(double number) => _number = number;
+    public double Eval(IContext context) => _number;
 }

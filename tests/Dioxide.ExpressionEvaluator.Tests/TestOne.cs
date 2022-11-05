@@ -18,7 +18,7 @@ namespace Dioxide.ExpressionEvaluator.Tests
 
             Assert.Equal(14, offset);
             Assert.Equal(TokenType.Number, token.Type);
-            Assert.Equal(1234.5491m, token.Value);
+            Assert.Equal(1234.5491, token.Value);
             Assert.Empty(token.Identifier);
         }
 
@@ -32,7 +32,7 @@ namespace Dioxide.ExpressionEvaluator.Tests
 
             Assert.Equal(10, offset);
             Assert.Equal(TokenType.Number, token.Type);
-            Assert.Equal(12.34m, token.Value);
+            Assert.Equal(12.34, token.Value);
             Assert.Empty(token.Identifier);
         }
 

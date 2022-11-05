@@ -2,5 +2,5 @@ namespace Dioxide.ExpressionEvaluator.Abstract;
 
 public interface INode
 {
-    decimal Eval(IContext ctx);
+    double Eval(IContext ctx);
 }

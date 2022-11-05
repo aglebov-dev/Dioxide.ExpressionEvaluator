@@ -3,18 +3,10 @@ namespace Dioxide.ExpressionEvaluator.Tokens
     internal struct Token
     {
         public TokenType Type { get; }
-        public decimal Value { get; }
+        public double Value { get; }
         public string Identifier { get; }
-        public bool IsSymbolToken => Type is
-            TokenType.Add or
-            TokenType.Subtract or
-            TokenType.Multiply or
-            TokenType.Divide or
-            TokenType.OpenParens or
-            TokenType.CloseParens or
-            TokenType.Comma;
 
-        private Token(TokenType type, decimal value, string identifier)
+        private Token(TokenType type, double value, string identifier)
         {
             Type = type;
             Value = value;
@@ -24,7 +16,7 @@ namespace Dioxide.ExpressionEvaluator.Tokens
         public Token(TokenType type)
             : this(type, default, string.Empty) { }
 
-        public Token(decimal value)
+        public Token(double value)
             : this(TokenType.Number, value, string.Empty) { }
 
         public Token(string identifier)
@@ -42,6 +34,7 @@ namespace Dioxide.ExpressionEvaluator.Tokens
                 TokenType.OpenParens => "(",
                 TokenType.CloseParens => ")",
                 TokenType.Comma => ",",
+                TokenType.Pow => "^",
                 TokenType.Number => Value.ToString(),
                 TokenType.Identifier => Identifier,
                 TokenType.EOF => "EOF",

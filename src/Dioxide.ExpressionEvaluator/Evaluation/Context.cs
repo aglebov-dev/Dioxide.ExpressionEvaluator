@@ -7,50 +7,37 @@ namespace Dioxide.ExpressionEvaluator.Evaluation;
 
 internal sealed class Context : IContext
 {
-    private readonly HashSet<string> _executingFunctions;
-    private readonly Dictionary<string, decimal> _variables;
-    private readonly Dictionary<string, Func<decimal[], decimal>> _functions;
+    private static StringComparer _comparer = StringComparer.OrdinalIgnoreCase;
+    private readonly HashSet<string> _executingFunctions = new(_comparer);
+    private readonly Dictionary<string, double> _variables = new(_comparer);
+    private readonly Dictionary<string, CustomEvalFunction> _functions = new(_comparer);
 
-    public Context()
-    {
-        var comparer = StringComparer.OrdinalIgnoreCase;
-
-        _executingFunctions = new HashSet<string>(comparer);
-        _variables = new Dictionary<string, decimal>(comparer);
-        _functions = new Dictionary<string, Func<decimal[], decimal>>(comparer);
-    }
-
-    public decimal ResolveVariable(string name)
+    public double ResolveVariable(string name)
     {
         if (!_variables.TryGetValue(name, out var value))
         {
-            throw new UnknownVariableException($"Unknown variable: '{name}'. Check that it has been added to the calculation context.");
+            throw new UnknownVariableException(
+                $"Unknown variable: '{name}'. Check that it has been added to the calculation context.");
         }
 
         return value;
     }
 
-    public IContext AddFunction(string name, Func<decimal[], decimal> function)
+    public IContext AddFunction(string name, CustomEvalFunction function)
     {
         _functions[name] = function;
         return this;
     }
 
-    public IContext AddVariable(string name, decimal value)
+    public IContext AddVariable(string name, double value)
     {
         _variables[name] = value;
         return this;
     }
 
-    public decimal CallFunction(string name, decimal[] arguments)
-    {
-        if (!_functions.TryGetValue(name, out var function))
-        {
-            throw new UnknownFunctionException($"Unknown function: '{name}'. Check that it has been added to the calculation context.");
-        }
-
-        return function(arguments);
-    }
+    public double CallFunction(string name, double[] args)
+        => _functions.GetValueOrDefault(name)?.Invoke(args)
+            ?? throw new UnknownFunctionException($"Unknown function: '{name}'. Check that it has been added to the calculation context.");
 
     public void AddExecutingFunction(string name)
     {
@@ -63,7 +50,5 @@ internal sealed class Context : IContext
     }
 
     public void RemoveExecutingFunction(string name)
-    {
-        _executingFunctions.Remove(name);
-    }
+        => _executingFunctions.Remove(name);
 }

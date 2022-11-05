@@ -29,7 +29,7 @@ namespace Dioxide.ExpressionEvaluator.Tokenizers
             }
 
             var valueSpan = array.AsSpan().Slice(head, offset - head);
-            var value = decimal.Parse(valueSpan);
+            var value = double.Parse(valueSpan);
 
             return new Token(value);
         }

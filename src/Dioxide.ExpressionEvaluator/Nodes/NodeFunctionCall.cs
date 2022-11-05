@@ -4,8 +4,8 @@ namespace Dioxide.ExpressionEvaluator.Nodes;
 
 internal sealed class NodeFunctionCall : INode
 {
-    private string _functionName;
-    private INode[] _arguments;
+    private readonly string _functionName;
+    private readonly INode[] _arguments;
 
     public NodeFunctionCall(string functionName, INode[] arguments)
     {
@@ -13,11 +13,11 @@ internal sealed class NodeFunctionCall : INode
         _arguments = arguments;
     }
 
-    public decimal Eval(IContext context)
+    public double Eval(IContext context)
     {
         context.AddExecutingFunction(_functionName);
 
-        var argVals = new decimal[_arguments.Length];
+        var argVals = new double[_arguments.Length];
         for (var i = 0; i < _arguments.Length; i++)
         {
             argVals[i] = _arguments[i].Eval(context);

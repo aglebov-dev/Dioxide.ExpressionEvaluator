@@ -13,4 +13,6 @@ internal enum TokenType
     Comma,
     Identifier,
     Number,
+    Pow
 }
+

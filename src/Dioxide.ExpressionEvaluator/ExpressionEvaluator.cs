@@ -15,7 +15,7 @@ namespace Dioxide.ExpressionEvaluator
             _context = new Context();
         }
 
-        public decimal Calculate(string expression)
+        public double Calculate(string expression)
         {
             return _parser.Parse(expression).Eval(_context);
         }
@@ -32,13 +32,13 @@ namespace Dioxide.ExpressionEvaluator
             return this;
         }
 
-        public ExpressionEvaluator AddFunction(string name, Func<decimal[], decimal> function)
+        public ExpressionEvaluator AddFunction(string name, CustomEvalFunction function)
         {
             _context.AddFunction(name, function);
             return this;
         }
 
-        public ExpressionEvaluator AddVariable(string name, decimal value)
+        public ExpressionEvaluator AddVariable(string name, double value)
         {
             _context.AddVariable(name, value);
             return this;
